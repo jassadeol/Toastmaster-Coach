@@ -6,12 +6,15 @@
     grab information from articles or online to create lessons of own 
 """
 
-#import for audio processing, speech transcription, logging and GPT API Calls
+#import for audio processing, speech transcription, logging and GPT API Calls, time and system
 import pyaudio, wave, whisper, nltk, os, openai #nltk.download('stopwords')
+from openai import OpenAI
 from datetime import datetime
 from lesson_plan import get_today_focus, get_random_prompt
 from focus_modules import focus_library
 from dotenv import load_dotenv
+import time
+import sys
 
 #download natural language toolkit assets for speech analysis
 #i.e stopwords, filler words
@@ -19,32 +22,50 @@ nltk.download('stopwords')
 
 #assigned OpenAI Api key for GPT integration
 load_dotenv()
-openai.api_key = os.getenv("OPENAI_API_KEY")
+api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=api_key)
 
 # core functionality
+SESSION_DURATION = 30
 
 #Function: Live audio recording into .wav file
-def record_audio(filename="speech.wav", duration=180):
+def record_audio(duration, filename="speech.wav"):
     #initialize mic input using PyAudio
+    RATE = 16000
+    CHUNK = 1024
+
     p = pyaudio.PyAudio()
-    stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
+
+    stream = p.open(format=pyaudio.paInt16, channels=1, rate=RATE, input=True, frames_per_buffer=CHUNK)
+    print("Recording... start speaking (CTRL+C to cancel)\n")
     frames = []
 
-    print("Recording... start speaking")
-
+    start_time = time.time()
+    end_time = start_time + duration
+    
     #collect audio in small chunks for the duration set
-    for _ in range(0, int(16000/1024*duration)):
-        data = stream.read(1024)
+    while time.time() < end_time:
+        data = stream.read(CHUNK)
         frames.append(data)
 
-    #clean up audio stream and write to WAV file
+        remaining = int(end_time - time.time())
+        mins, secs = divmod(remaining, 60)
+        timer_display = f"\r Time left: {mins:02d} : {secs:02d}"
+        sys.stdout.write(timer_display)
+        sys.stdout.flush()
+    
+    
+    #clean up audio stream 
     stream.stop_stream(); stream.close(); p.terminate()
+    
+    #write to WAV file
     with wave.open(filename, 'wb') as wf:
         wf.setnchannels(1)
         wf.setsampwidth(p.get_sample_size(pyaudio.paInt16))
-        wf.setframerate(16000); wf.writeframes(b''.join(frames))
+        wf.setframerate(RATE)
+        wf.writeframes(b''.join(frames))
 
-    print("Recording complete.")
+    print("\nRecording complete.\n")
 
 #Function: transcribe audio file to text for analysis
 def transcribe_audio(filename="speech.wav"):
@@ -74,17 +95,17 @@ def analyze_speech(text, cheatsheet):
 def gpt_feedback(text, focus):
     system_msg = f"You are a speech coach. Give helpful, constructive feedback for the following speech. Focus especially on '{focus}'. Keep your tone encouraging but specific. "
 
-    response = openai.ChatCompletion.create(
-        model="gpt-4",
+    response = client.chat.completions.create(
+        model="gpt-4.1-nano",
         messages=[
             {"role": "system", "content": system_msg},
             {"role": "user", "content": text}
             ]
         )
 
-    feedback = response['choices'][0]['message']['content']
+    feedback = response.choices[0].message.content
 
-    print ("\n Coach GPT Feedback: \n ", feedback)
+    print ("\nCoach GPT Feedback: \n ", feedback)
     return feedback
 
 
@@ -94,9 +115,9 @@ def log_session(session_type, focus, prompt, transcript, feedback, filler_count,
     filename = f"logs/{session_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
 
     with open(filename, "w", encoding="utf-8") as f:
-        f.write(f"Date: {datetime.now()} \n Focus: {focus} \n Prompt: {prompt} \n\n --- Transcript --- \n{transcript}\n")
-        f.write(f"\n -- Metrics --\n Filler Words: (filler_count)\nNew Disfluencies: {extras}\n")
-        f.write(f"\n -- GPT Feedback --\n {feedback}\n")
+        f.write(f"Date: {datetime.now()} \nFocus: {focus} \nPrompt: {prompt} \n\n --- Transcript --- \n{transcript}\n")
+        f.write(f"\n -- Metrics --\n Filler Words: {filler_count}\nNew Disfluencies: {extras}\n")
+        f.write(f"\n -- GPT Feedback --\n{feedback}\n")
 
 #Function: explain the lesson, along with examples for speech preparation 
 def display_focus_material(focus):
@@ -119,9 +140,9 @@ def run_coaching_loop():
      print(f"\nToday's Focus: {focus}")
      cheatsheet = display_focus_material(focus)
 
-     input(f"\n Prompt: {prompt} \nPress Enter when ready to begin your 3 min speech...")
+     input(f"\nPrompt: {prompt} \nPress Enter when ready to begin your {(SESSION_DURATION/60):.1f} min(s) speech...")
 
-     record_audio(duration=180)
+     record_audio(duration=SESSION_DURATION)
      transcript = transcribe_audio()
      filler_count, extras, wpm = analyze_speech(transcript, cheatsheet)
      feedback = gpt_feedback(transcript, focus)
@@ -133,8 +154,8 @@ def run_coaching_loop():
 if __name__ == "__main__":
     print("Welcome to your Personal Toastmaster Coach")
 
-    rounds = int(input("How many rounds would you like in today's 30 mins session (i.e. 2 or 3)?"))
+    rounds = int(input(f"How many rounds would you like in today's session (i.e. 2 or 3)?"))
 
     for i in range(rounds):
-        print(f"\n Round {i+1} of {rounds}")
-        run_coaching_loop
+        print(f"\nRound {i+1} of {rounds}")
+        run_coaching_loop()

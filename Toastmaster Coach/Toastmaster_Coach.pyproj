@@ -12,6 +12,7 @@
     <OutputPath>.</OutputPath>
     <Name>Toastmaster_Coach</Name>
     <RootNamespace>Toastmaster Coach</RootNamespace>
+    <InterpreterId>Global|VisualStudio|PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -28,6 +29,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include=".env" />
+  </ItemGroup>
+  <ItemGroup>
+    <InterpreterReference Include="Global|VisualStudio|PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
