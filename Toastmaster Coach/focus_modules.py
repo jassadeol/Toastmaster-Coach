@@ -1,3 +1,8 @@
+""" Jasleen Deol
+    Date: June 24, 2025
+    Description: Module to store focus areas and their details for Toastmaster coaching.
+    Future: Expand with more focus areas and examples.
+"""
 focus_library = {
     "Reduce filler words": {
         "description": "Today you're training your mind to eliminate verbal clutter—those 'uh', 'um', 'like', 'you know' habits.",
