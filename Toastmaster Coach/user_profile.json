@@ -1,0 +1,29 @@
+{
+  "user": "jasleen",
+  "focus_progress": {
+    "Reduce filler words": {
+      "preliminary_done": true,
+      "practice_sessions": 3,
+      "midterm_done": false,
+      "last_feedback": "Watch for 'you know'—getting better each time."
+    },
+    "Enhance vocal variety": {
+      "preliminary_done": true,
+      "practice_sessions": 1,
+      "midterm_done": false,
+      "last_feedback": "Try emphasizing contrast when making a point."
+    }
+    // ... other focuses to add
+  },
+  "last_session": {
+    "date": "2025-06-24",
+    "focus": "Enhance vocal variety",
+    "session_type": "practice",
+    "duration": 24
+  },
+  "next_session": {
+    "focus": "Reduce filler words",
+    "session_type": "practice",
+    "feedback_recall": "Enhance vocal variety"
+  }
+}

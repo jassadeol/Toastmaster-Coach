@@ -1,0 +1,27 @@
+/*Jasleen Deol June 24, 2025
+  JSON file serves as a schema for feedback
+*/
+
+{
+  "focus": "REPLACE_WITH_FOCUS",
+  "session_type": "preliminary | practice | midterm",
+  "date": "YYYY-MM-DD",
+  "duration_minutes": 25,
+  "feedback": {
+    "score": null,
+    "comments": "REPLACE_WITH_COACH_COMMENTS",
+    "recommendations": [
+      "REPLACE_WITH_SUGGESTED_ACTION_1",
+      "REPLACE_WITH_SUGGESTED_ACTION_2"
+    ]
+  },
+  "audio_file": "audio.wav"
+}
+
+/* features to add later
+  coach_name or coach_id (if multi-coach platform)
+  coach_personality, gender, voice
+  transcript_file: for storing automated transcripts
+  delivery_metrics: e.g. “speech_speed”, “pause_count”
+  emotional_tone: for future AI-powered tonal analysis
+*/

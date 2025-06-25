@@ -26,9 +26,14 @@
     <Compile Include="focus_modules.py" />
     <Compile Include="lesson_plan.py" />
     <Compile Include="main.py" />
+    <Compile Include="session_logger.py" />
+    <Compile Include="test_session_logger.py" />
+    <Compile Include="user_profile.py" />
   </ItemGroup>
   <ItemGroup>
     <Content Include=".env" />
+    <Content Include="feedback_template.json" />
+    <Content Include="user_profile.json" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|VisualStudio|PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0" />

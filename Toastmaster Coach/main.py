@@ -7,14 +7,15 @@
 """
 
 #import for audio processing, speech transcription, logging and GPT API Calls, time and system
-import pyaudio, wave, whisper, nltk, os, openai #nltk.download('stopwords')
+import pyaudio, wave, whisper, nltk, openai
+import os, time, sys
 from openai import OpenAI
 from datetime import datetime
 from lesson_plan import get_today_focus, get_random_prompt
 from focus_modules import focus_library
 from dotenv import load_dotenv
-import time
-import sys
+from session_logger import create_session_folder
+from user_profile import load_user_profile, update_focus_after_session
 
 #download natural language toolkit assets for speech analysis
 #i.e stopwords, filler words
@@ -27,6 +28,7 @@ client = OpenAI(api_key=api_key)
 
 # core functionality
 SESSION_DURATION = 30
+
 
 #Function: Live audio recording into .wav file
 def record_audio(duration, filename="speech.wav"):
@@ -124,7 +126,6 @@ def display_focus_material(focus):
     mat = focus_library.get(focus)
     if mat:
         print(f"""
-        FOCUS: {focus}
         {mat['description']}
         Filler/Flaws to avoid: {', '.join(mat['cheatsheet'])}
         Bad Example: {mat['examples']['bad']}
@@ -133,11 +134,12 @@ def display_focus_material(focus):
 
 #Function: core logic, step by step process from start to end of Coach
 def run_coaching_loop():
-     session_type = input("Session type (practice/prelim/midterm/final): ").strip().lower()
-     focus = get_today_focus()
+     #session_type = input("Session type (practice/prelim/midterm/final): ").strip().lower()
+     profile = load_user_profile()
+     focus, session_type = get_today_focus()
      prompt = get_random_prompt()
 
-     print(f"\nToday's Focus: {focus}")
+     print(f"\nToday's Focus: {focus} ({session_type})")
      cheatsheet = display_focus_material(focus)
 
      input(f"\nPrompt: {prompt} \nPress Enter when ready to begin your {(SESSION_DURATION/60):.1f} min(s) speech...")
@@ -148,7 +150,9 @@ def run_coaching_loop():
      feedback = gpt_feedback(transcript, focus)
      log_session(session_type, focus, prompt, transcript, feedback, filler_count, extras)
 
-     print("\n Session complete and saved.")
+     update_focus_after_session(profile, focus=focus, session_type=session_type, feedback_summary=feedback,duration=SESSION_DURATION)
+
+     print("\n Session complete and profile saved.")
 
 #Function: entry point to program, prompt user for # of sessions
 if __name__ == "__main__":
