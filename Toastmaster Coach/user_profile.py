@@ -1,21 +1,31 @@
 import json, random
 from pathlib import Path
 from datetime import date
+from lesson_plan import daily_focuses
 
 PROFILE_PATH = Path("user_profile.json")
 
 def load_user_profile():
-    if PROFILE_PATH.EXISTS():
+    if PROFILE_PATH.exists():
         with open(PROFILE_PATH, "r") as f:
             return json.load(f)
 
     else:
-        return{
+        profile = {
                 "user": "jasleen",
                 "focus_progress": {},
                 "last_session": {},
                 "next_session": {}
             }
+        
+        # Inject first session plan
+        focus, session_type = determine_next_session(profile)
+        profile["next_session"] = {
+            "focus": focus,
+            "session_type": session_type,
+            "feedback_recall": None
+        }
+    return profile
 
 def save_user_profile(profile):
     with open(PROFILE_PATH, "w") as f:
@@ -28,7 +38,7 @@ def update_focus_after_session(profile, focus, session_type, feedback_summary, d
         "midterm_done": False,
         "last_feedback": ""
         })
-
+        
     if session_type == "preliminary":
         progress["preliminary_done"] = True
     elif session_type == "practice":
@@ -52,10 +62,16 @@ def determine_next_session(profile):
     progress = profile["focus_progress"]
 
     #randomize focus
-    focus_list = list(progress.items())
-    random.shuffle(focus_list)
+    #focus_list = list(lesson_plan.keys)
+    random.shuffle(daily_focuses)
 
-    for focus, stats in focus_list:
+    for focus in daily_focuses:
+        stats = progress.setdefault(focus, {
+        "preliminary_done": False, 
+        "practice_sessions": 0, 
+        "midterm_done": False,
+        "last_feedback": ""
+        })
         if not stats ["preliminary_done"]:
             return focus, "preliminary"
         elif stats["practice_sessions"] < 10:

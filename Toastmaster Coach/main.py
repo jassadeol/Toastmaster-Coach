@@ -31,10 +31,11 @@ SESSION_DURATION = 30
 
 
 #Function: Live audio recording into .wav file
-def record_audio(duration, filename="speech.wav"):
+def record_audio(filename, session_number, duration):
     #initialize mic input using PyAudio
     RATE = 16000
     CHUNK = 1024
+    #filename = os.path.join(folder, f"speech_{str(session_number).zfill(2)}.wav")
 
     p = pyaudio.PyAudio()
 
@@ -70,7 +71,7 @@ def record_audio(duration, filename="speech.wav"):
     print("\nRecording complete.\n")
 
 #Function: transcribe audio file to text for analysis
-def transcribe_audio(filename="speech.wav"):
+def transcribe_audio(filename):
     model=whisper.load_model("base")
     result = model.transcribe(filename)
     return result["text"]
@@ -112,13 +113,14 @@ def gpt_feedback(text, focus):
 
 
 #Function: keep journal of each session to monitor progress with time and focus type
-def log_session(session_type, focus, prompt, transcript, feedback, filler_count, extras):
+def log_session(folder, session_number, session_type, focus, prompt, transcript, feedback, filler_count, extras, wpm):
     os.makedirs("logs", exist_ok=True)
-    filename = f"logs/{session_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
-
+    #filename = f"logs/{session_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
+    filename = os.path.join(folder, f"{focus}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{session_type}_{str(session_number).zfill(2)}.txt")
+    
     with open(filename, "w", encoding="utf-8") as f:
         f.write(f"Date: {datetime.now()} \nFocus: {focus} \nPrompt: {prompt} \n\n --- Transcript --- \n{transcript}\n")
-        f.write(f"\n -- Metrics --\n Filler Words: {filler_count}\nNew Disfluencies: {extras}\n")
+        f.write(f"\n -- Metrics --\n Filler Words: {filler_count}\nNew Disfluencies: {extras}\n\nWords per Minute: {wpm}\n\n")
         f.write(f"\n -- GPT Feedback --\n{feedback}\n")
 
 #Function: explain the lesson, along with examples for speech preparation 
@@ -136,19 +138,35 @@ def display_focus_material(focus):
 def run_coaching_loop():
      #session_type = input("Session type (practice/prelim/midterm/final): ").strip().lower()
      profile = load_user_profile()
-     focus, session_type = get_today_focus()
-     prompt = get_random_prompt()
+     focus, session_type, prompt = get_today_focus(profile=profile)
+     #prompt = get_random_prompt()
+     if 0 < profile["focus_progress"][focus]["practice_sessions"] < 10:
+         session_number = profile["focus_progress"][focus]["practice_sessions"]
+     else:
+        session_number = 0
+
 
      print(f"\nToday's Focus: {focus} ({session_type})")
      cheatsheet = display_focus_material(focus)
 
      input(f"\nPrompt: {prompt} \nPress Enter when ready to begin your {(SESSION_DURATION/60):.1f} min(s) speech...")
 
-     record_audio(duration=SESSION_DURATION)
-     transcript = transcribe_audio()
+     #grab file name and file path
+     date = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+     session_folder = create_session_folder(focus=focus, session_type=session_type, date=date, session_number=session_number)
+     filename = os.path.join(
+         session_folder, 
+         f"speech_{str(session_number).zfill(2)}.wav"
+         )
+
+     #main meat
+     record_audio(filename, session_number, duration=SESSION_DURATION)
+     transcript = transcribe_audio(filename)
+
+     #grab feedback and log it
      filler_count, extras, wpm = analyze_speech(transcript, cheatsheet)
      feedback = gpt_feedback(transcript, focus)
-     log_session(session_type, focus, prompt, transcript, feedback, filler_count, extras)
+     log_session(session_folder, session_number, session_type, focus, prompt, transcript, feedback, filler_count, extras, wpm)
 
      update_focus_after_session(profile, focus=focus, session_type=session_type, feedback_summary=feedback,duration=SESSION_DURATION)
 
@@ -158,7 +176,7 @@ def run_coaching_loop():
 if __name__ == "__main__":
     print("Welcome to your Personal Toastmaster Coach")
 
-    rounds = int(input(f"How many rounds would you like in today's session (i.e. 2 or 3)?"))
+    rounds = int(input(f"How many rounds would you like in today's session (i.e. 2 or 3)?\n"))
 
     for i in range(rounds):
         print(f"\nRound {i+1} of {rounds}")

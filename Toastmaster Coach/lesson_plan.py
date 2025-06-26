@@ -27,7 +27,7 @@ prompts = [
 
 def get_today_focus(profile):
     next_session = profile.get("next_session", {})
-    return next_session.get("focus"), next_session.get("session_type")
+    return next_session.get("focus"), next_session.get("session_type"), random.choice(prompts)
 
 #    return daily_focuses[datetime.now().day % len(daily_focuses)]
 

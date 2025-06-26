@@ -22,6 +22,6 @@
   coach_name or coach_id (if multi-coach platform)
   coach_personality, gender, voice
   transcript_file: for storing automated transcripts
-  delivery_metrics: e.g. “speech_speed”, “pause_count”
+  delivery_metrics: e.g. ï¿½speech_speedï¿½, ï¿½pause_countï¿½
   emotional_tone: for future AI-powered tonal analysis
 */

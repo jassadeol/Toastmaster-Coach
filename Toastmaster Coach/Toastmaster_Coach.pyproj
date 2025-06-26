@@ -13,6 +13,7 @@
     <Name>Toastmaster_Coach</Name>
     <RootNamespace>Toastmaster Coach</RootNamespace>
     <InterpreterId>Global|VisualStudio|PythonSoftwareFoundation.Python.3.11_qbz5n2kfra8p0</InterpreterId>
+    <SuppressConfigureTestFrameworkPrompt>true</SuppressConfigureTestFrameworkPrompt>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>

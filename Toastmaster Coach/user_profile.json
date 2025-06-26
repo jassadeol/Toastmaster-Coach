@@ -1,29 +1,29 @@
 {
-  "user": "jasleen",
-  "focus_progress": {
-    "Reduce filler words": {
-      "preliminary_done": true,
-      "practice_sessions": 3,
-      "midterm_done": false,
-      "last_feedback": "Watch for 'you know'—getting better each time."
+    "user": "jasleen",
+    "focus_progress": {
+        "Practice impromptu speaking": {
+            "preliminary_done": true,
+            "practice_sessions": 0,
+            "midterm_done": false,
+            "last_feedback": "Thanks for sharing your speech! You've introduced a creative and fun idea with the Barbie closet, and I appreciate your enthusiasm. Now, when it comes to practicing impromptu speaking, here are some tips to help you strengthen your skills:\n\n1. **Expand Your Thinking Time:** Before jumping into your speech, take a quick second to organize your thoughts. Even a brief pause can help you gather ideas and present them more confidently. In a practice setting, try resisting the urge to jump straight in\u2014pause briefly and then start.\n\n2. **Practice with Random Prompts:** Challenge yourself by practicing with random questions or topics that you haven't prepared for. For example, I might ask you, \"What invention would you create if you had unlimited resources?\" Practicing this way makes you more comfortable thinking on your feet.\n\n3. **Create a Mental Framework:** Develop a simple structure to organize your thoughts quickly. For instance, for your invention, you might think: what it is (the Barbie closet), why it's exciting (imagine outfits matching mood and occasion), and who it benefits (any woman). Having a quick mental outline helps your ideas flow smoothly.\n\n4. **Stay Relaxed and Embrace Mistakes:** Remember, impromptu speaking is about sharing ideas authentically. Even if you stumble or need a moment to think, that\u2019s okay! Practice getting comfortable with the pause, and trust that your natural thoughts will come through.\n\n5. **Keep Practicing Often:** Regularly challenge yourself with unpredictable topics. Even just a few minutes a day can make a big difference in your ability to think and speak on the spot.\n\nYou're already doing a great job of sharing your ideas\u2014I encourage you to keep practicing and trying these techniques. Over time, you'll find yourself more confident and spontaneous in your speaking!"
+        },
+        "Reduce filler words": {
+            "preliminary_done": true,
+            "practice_sessions": 0,
+            "midterm_done": false,
+            "last_feedback": "Thank you for sharing your vision\u2014it\u2019s a beautiful and inspiring outlook! I really like how you painted a peaceful picture of your ideal world. To make your speech even stronger, let\u2019s focus on reducing filler words like \"uh\" or \"and\" so your message comes across more confidently and smoothly.\n\nCurrently, phrases like \"and this is my utopia\" can sometimes come across as transitional filler, so consider pausing briefly instead of adding extra \"ands.\" For example, you might say, \"This is my utopia,\" with a brief pause afterwards. This gives your audience a moment to absorb your message and makes your delivery more powerful.\n\nAlso, be mindful of phrasing like, \"everyone has peace, content,\"\u2014it might flow more naturally if you say, \"everyone is peaceful and content.\" Small adjustments like that help your speech sound more polished.\n\nKeep practicing, and don\u2019t be afraid to take a little pause to gather your thoughts\u2014this can reduce filler words and make your presentation more impactful. You\u2019re doing a great job of sharing your vision. Keep it up!"
+        },
+        "Master transitions between ideas": {
+            "preliminary_done": true,
+            "practice_sessions": 0,
+            "midterm_done": false,
+            "last_feedback": "Great job opening with a clear and compelling idea\u2014that failure should be celebrated. Your message is inspiring, and your personal example adds authenticity. \n\nTo strengthen your speech, let's focus on making your transitions between ideas smoother. Currently, the jump from the general concept of celebrating failure to your personal story feels a bit abrupt. To improve this, you might consider using a bridging phrase like, \"For example,\" or \"Let me share a personal experience.\" For instance, after your opening statement, you could say, \"For example, I once failed a university course, and that experience actually motivated me further.\"\n\nAdditionally, when you move from your personal story back to the broader idea, you might use a concluding phrase like, \"This experience taught me that failure isn\u2019t the end, but a valuable step forward.\" This helps your audience follow your train of thought more naturally.\n\nRemember, effective transitions serve as signposts for your audience, guiding them through your ideas seamlessly. Keep practicing these linking phrases\u2014they will make your speech flow even more confidently! You're on a great path\u2014keep it up!"
+        }
     },
-    "Enhance vocal variety": {
-      "preliminary_done": true,
-      "practice_sessions": 1,
-      "midterm_done": false,
-      "last_feedback": "Try emphasizing contrast when making a point."
+    "last_session": {},
+    "next_session": {
+        "focus": "Master transitions between ideas",
+        "session_type": "practice",
+        "feedback_recall": "Master transitions between ideas"
     }
-    // ... other focuses to add
-  },
-  "last_session": {
-    "date": "2025-06-24",
-    "focus": "Enhance vocal variety",
-    "session_type": "practice",
-    "duration": 24
-  },
-  "next_session": {
-    "focus": "Reduce filler words",
-    "session_type": "practice",
-    "feedback_recall": "Enhance vocal variety"
-  }
 }
