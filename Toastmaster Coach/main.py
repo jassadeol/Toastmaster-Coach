@@ -7,27 +7,106 @@
 """
 
 #import for audio processing, speech transcription, logging and GPT API Calls, time and system
-import pyaudio, wave, whisper, nltk, openai
-import os, time, sys
+#import pyaudio, wave, whisper, nltk, openai
+import os, time, sys, random
 from openai import OpenAI
 from datetime import datetime
 from lesson_plan import get_today_focus, get_random_prompt
 from focus_modules import focus_library
 from dotenv import load_dotenv
-from session_logger import create_session_folder
-from user_profile import load_user_profile, update_focus_after_session
+from session_logger import create_session_folder, log_session
+#from user_profile import load_user_profile, update_focus_after_session
 
 #download natural language toolkit assets for speech analysis
 #i.e stopwords, filler words
-nltk.download('stopwords')
+"""nltk.download('stopwords')
 
 #assigned OpenAI Api key for GPT integration
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=api_key)
-
+"""
 # core functionality
 SESSION_DURATION = 30
+
+# -- Card Display Helpers --
+# -------- Sample Data -------- #
+daily_focuses = [
+    "Reduce filler words",
+    "Enhance vocal variety",
+    "Practice impromptu speaking",
+    "Master transitions between ideas",
+    "Present with persuasive clarity"
+]
+
+lesson_plan = {
+    focus: {
+        "description": f"This is a sample lesson description for '{focus}'.",
+        "example_prompt": f"Example prompt for '{focus}'."
+    } for focus in daily_focuses
+}
+# Simulated past performance
+user_profile = {
+    "user": "Jasleen",
+    "focus_progress": {
+        "Present with persuasive clarity": {
+            "preliminary_done": True,
+            "practice_sessions": 2,
+            "midterm_done": False,
+            "last_feedback": "Try closing with a stronger call-to-action."
+        }
+    },
+    "next_session": {
+        "focus": "Present with persuasive clarity",
+        "session_type": "practice",
+        "feedback_recall": None
+    }
+}
+
+# ----- ^ above to be deleted --------
+def display_start_card(profile):
+    focus = profile["next_session"]["focus"]
+    session_type = profile["next_session"]["session_type"]
+    stats = profile["focus_progress"].get(focus, {
+        "preliminary_done": False,
+        "practice_sessions": 0, 
+        "midterm_done": False, 
+        "last_feedback": ""
+        })
+    prompt = lesson_plan[focus]["example_prompt"]
+
+    print(f"""
+    Toastmaster Coach: Session Preview
+
+    > User: {profile['user']}
+    > Focus Area: {focus}
+    > Prompt: {prompt}
+    > Last WPM: 132 | Filler Words: 5 | Session #{stats['practice_sessions'] + 1}
+    
+    Type 'listen' to hear the lesson overview (simulated)
+    Type 'feedback' to read previous feedback for this focus 
+    Type 'start' when ready to begin
+    """)
+
+def display_post_session_card(focus, session_num, retry_num, wpm, filler_count, disfluencies, tip):
+    time_now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    print (f"""
+    Session Feedback Summary - Attempt #{session_num +1} # Attempt {retry_num+1}
+
+    > Time: {time_now}
+    > Focus Area: {focus}
+    > WPM: {wpm} | Fillers: {filler_count} | disfluencies: {', '.join(disfluencies)}
+    
+    What You Did Well
+    - Opened strong wih a confident one
+    - Maintained steady pacing
+    
+    Suggested Improvement
+    {tip} 
+    Click (simulated audio feedback available)
+    Type 'retry' to do another attempt
+    Type 'progress' to view updated stats
+    Type 'continue' for the next session""")
 
 
 #Function: Live audio recording into .wav file
@@ -113,7 +192,7 @@ def gpt_feedback(text, focus):
 
 
 #Function: keep journal of each session to monitor progress with time and focus type
-def log_session(folder, session_number, session_type, focus, prompt, transcript, feedback, filler_count, extras, wpm):
+"""def log_session(folder, session_number, session_type, focus, prompt, transcript, feedback, filler_count, extras, wpm):
     os.makedirs("logs", exist_ok=True)
     #filename = f"logs/{session_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
     filename = os.path.join(folder, f"{focus}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{session_type}_{str(session_number).zfill(2)}.txt")
@@ -122,7 +201,7 @@ def log_session(folder, session_number, session_type, focus, prompt, transcript,
         f.write(f"Date: {datetime.now()} \nFocus: {focus} \nPrompt: {prompt} \n\n --- Transcript --- \n{transcript}\n")
         f.write(f"\n -- Metrics --\n Filler Words: {filler_count}\nNew Disfluencies: {extras}\n\nWords per Minute: {wpm}\n\n")
         f.write(f"\n -- GPT Feedback --\n{feedback}\n")
-
+"""
 #Function: explain the lesson, along with examples for speech preparation 
 def display_focus_material(focus):
     mat = focus_library.get(focus)
@@ -133,13 +212,119 @@ def display_focus_material(focus):
         Bad Example: {mat['examples']['bad']}
         Better Version: {mat['examples']['good']} """)
     return mat['cheatsheet'] if mat else []
+def run_pre_session_intro():
+    display_start_card(user_profile)
+    while True:
+        ready = input(">> ").strip().lower()
+        if ready == "listen":
+            print("\nPlaying audio ...\n")
+            time.sleep(2)
+        elif ready == "feedback":
+            print("\nPrevious feedback:")
+            print (user_profile["focus_progress"][user_profile["next_session"]["focus"]]["last_feedback"]+ "\n")
+        elif ready == "start":
+            break
+def run_attempt(retry_count, session, focus, attempts):
+    print(f"\nRecording: Session {session + 1}, Attempt {retry_count+1} ...")
+    time.sleep(3)
 
-#Function: core logic, step by step process from start to end of Coach
+    #simulate output
+    wpm = random.randint(50, 120)
+    filler_count = random.randint(0, 6)
+    disfluencies = random.sample(["uh", "um", "like", "you know"], k=2)
+    tip = random.choice([
+        "Try to conclude with clearer call-to-action", 
+        "Watch for fillers mid-paragraph - they dilute momentum", 
+        "Your transitions need tightening between points",
+        ])
+                
+    #post session logic
+    display_post_session_card(
+        focus=user_profile["next_session"]["focus"],
+        session_num = session,
+        retry_num = retry_count,
+        wpm=wpm, 
+        filler_count=filler_count, 
+        disfluencies=disfluencies, 
+        tip=tip)
+
+    attempts.append({
+        "attempt_num" : retry_count+1, 
+        "wpm": wpm, 
+        "fillers": filler_count, 
+        "disfluencies": disfluencies, 
+        "tip": tip,
+        "timestamp": datetime.now().isoformat()
+
+    })
+
+def run_terminal_coaching():
+    #change to a do..while loop so that display_start_card is called after session ends
+    #session = 0
+    session_count = input("How many sessions would you like to do today? ")
+    try:
+        session_count = int(session_count)
+    except:
+        print("Invalid input. Defaulting to one session.")
+        session_count = 1
+
+    focus, session_type, prompt = get_today_focus(profile=user_profile)
+    
+    #pre-session logic 
+    for session in range(session_count):
+        retry_count = 0
+        retry_limit = 2
+        attempts = []
+        focus = user_profile["next_session"]["focus"]
+        
+        run_pre_session_intro()
+        run_attempt(retry_count, session, focus, attempts)
+        
+        #start_signal = input("Press enter when ready to begin recording:  ")
+        #if start_signal == "":
+
+        #for session in range(1, session_count+1):
+        while retry_count < retry_limit:
+            #cmd = input("Type 'retry' to try this exercise again or 'continue''progress', or press Enter to continue: ").strip().lower()
+            if retry_count >= retry_limit:
+                print("You have reached the max retry attempts. Moving on")
+                break
+            cmd = input(">> ")
+            if cmd == "retry":
+                retry_count +=1 
+                run_attempt(retry_count, session, focus, attempts)
+            elif cmd == "progress":
+                print("\n Updated stats")
+                print (user_profile["focus_progress"][user_profile["next_session"]["focus"]]["last_feedback"]+ "\n")
+                continue
+            elif cmd == "continue":
+                break
+            else:
+                print("Invalid input. Continue to next session please.")
+                break
+                
+            # TODO: log_session(focus, session_number + s, attempts)
+        
+        print(f"\n Session {session + 1} complete.\n")
+        log_session(
+            base_folder="logs", 
+            focus=focus, 
+            session_type=session_type,
+            session_number=session, 
+            attempts=attempts)
+        #display_start_card(user_profile)
+        
+        
+
+if __name__ == "__main__":
+    run_terminal_coaching()
+        
+
+"""#Function: core logic, step by step process from start to end of Coach
 def run_coaching_loop():
-     #session_type = input("Session type (practice/prelim/midterm/final): ").strip().lower()
+     
      profile = load_user_profile()
      focus, session_type, prompt = get_today_focus(profile=profile)
-     #prompt = get_random_prompt()
      if 0 < profile["focus_progress"][focus]["practice_sessions"] < 10:
          session_number = profile["focus_progress"][focus]["practice_sessions"]
      else:
@@ -181,3 +366,4 @@ if __name__ == "__main__":
     for i in range(rounds):
         print(f"\nRound {i+1} of {rounds}")
         run_coaching_loop()
+        """
