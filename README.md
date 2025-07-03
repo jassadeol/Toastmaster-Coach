@@ -2,7 +2,7 @@
 
 # AI Toastmasters Coach
 
-Your personal speech dojo — built with Python, Whisper, and GPT.
+Your personal speech coach — built with Python, Whisper, and GPT.
 
 ## What It Is
 This is a solo public speaking coach designed to help you:
