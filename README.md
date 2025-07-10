@@ -26,3 +26,6 @@ This is a solo public speaking coach designed to help you:
 - OpenAI GPT API
 - Visual Studio / Windows 11
 - Pyaudio, N
+
+#Figma Prototype
+[View Figma Mockup] https://www.figma.com/proto/as6PA96jKmy5fEWSjMm0zN/Toastmasters-Coach?node-id=0-1&t=MlNnxMR0nzXEOGul-1
