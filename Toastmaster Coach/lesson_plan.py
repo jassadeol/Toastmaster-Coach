@@ -20,8 +20,10 @@ prompts = [
     "Should failure be celebrated?",
     "What's a small habit that changed your life?", 
     "Pitch a fictional invention to investors", 
-    "Describe your ideal utopia"
-    "Explain something complex like you're taking to a 5 year old"
+    "Explain something complex like you're taking to a 5 year old",
+    "If you were stuck on an island, how would you survive?",
+    "Should AI be banned in educational institutions?",
+    "Is Apple better than Android?"
 
     ]
 

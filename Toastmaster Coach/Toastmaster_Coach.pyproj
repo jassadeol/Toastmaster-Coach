@@ -24,6 +24,7 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="bot_logic.py" />
     <Compile Include="focus_modules.py" />
     <Compile Include="lesson_plan.py" />
     <Compile Include="main.py" />

@@ -1,4 +1,5 @@
 
+
 """ Jasleen Deol
     Date: June 24, 2025
     Description: core logic that runs the coaching session, prompts, processes and analyzes speech
@@ -6,26 +7,28 @@
     grab information from articles or online to create lessons of own 
 """
 
+
 #import for audio processing, speech transcription, logging and GPT API Calls, time and system
-#import pyaudio, wave, whisper, nltk, openai
-import os, time, sys, random
+import pyaudio, wave, whisper, nltk, openai
+import os, time, sys, random, json
 from openai import OpenAI
 from datetime import datetime
 from lesson_plan import get_today_focus, get_random_prompt
 from focus_modules import focus_library
 from dotenv import load_dotenv
 from session_logger import create_session_folder, log_session
-#from user_profile import load_user_profile, update_focus_after_session
+from user_profile import load_user_profile, update_focus_after_session
+
 
 #download natural language toolkit assets for speech analysis
 #i.e stopwords, filler words
-"""nltk.download('stopwords')
+nltk.download('stopwords')
 
 #assigned OpenAI Api key for GPT integration
 load_dotenv()
 api_key = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=api_key)
-"""
+
 # core functionality
 SESSION_DURATION = 30
 
@@ -46,7 +49,7 @@ lesson_plan = {
     } for focus in daily_focuses
 }
 # Simulated past performance
-user_profile = {
+"""user_profile = {
     "user": "Jasleen",
     "focus_progress": {
         "Present with persuasive clarity": {
@@ -62,7 +65,7 @@ user_profile = {
         "feedback_recall": None
     }
 }
-
+"""
 # ----- ^ above to be deleted --------
 def display_start_card(profile):
     focus = profile["next_session"]["focus"]
@@ -192,7 +195,7 @@ def gpt_feedback(text, focus):
 
 
 #Function: keep journal of each session to monitor progress with time and focus type
-"""def log_session(folder, session_number, session_type, focus, prompt, transcript, feedback, filler_count, extras, wpm):
+def log_session(folder, session_number, session_type, focus, prompt, transcript, feedback, filler_count, extras, wpm):
     os.makedirs("logs", exist_ok=True)
     #filename = f"logs/{session_type}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
     filename = os.path.join(folder, f"{focus}_{datetime.now().strftime('%Y%m%d_%H%M%S')}_{session_type}_{str(session_number).zfill(2)}.txt")
@@ -201,7 +204,7 @@ def gpt_feedback(text, focus):
         f.write(f"Date: {datetime.now()} \nFocus: {focus} \nPrompt: {prompt} \n\n --- Transcript --- \n{transcript}\n")
         f.write(f"\n -- Metrics --\n Filler Words: {filler_count}\nNew Disfluencies: {extras}\n\nWords per Minute: {wpm}\n\n")
         f.write(f"\n -- GPT Feedback --\n{feedback}\n")
-"""
+
 #Function: explain the lesson, along with examples for speech preparation 
 def display_focus_material(focus):
     mat = focus_library.get(focus)
@@ -313,14 +316,35 @@ def run_terminal_coaching():
             session_number=session, 
             attempts=attempts)
         #display_start_card(user_profile)
-        
-        
+     
+#turns feedback data into valid Adaptive Card JSON
+def build_feedback_card(session_num, attempt_num, metrics, strengths, feedback):
+    return {
+        "type": "AdaptiveCard",
+        "version": "1.5",
+        "body": [
+            {"type": "TextBlock", "text": f"Feedback - Session {session_num}, Attempt {attempt_num}", "weight": "Bolder", "size": "Large"},
+            {"type": "FactSet", "facts": [
+                {"title": "WPM", "value": str(metrics["wpm"])},
+                {"title": "Fillers", "value": str(metrics["fillers"])},
+                {"title": "Disfluencies", "value": ", ".join(metrics["disfluencies"])}
+            ]},
+            {"type": "TextBlock", "text": "What You Did Well", "weight": "Bolder", "spacing": "Medium"},
+            {"type": "TextBlock", "text": "\n".join(f"- {s}" for s in strengths), "wrap": True},
+            {"type": "TextBlock", "text": "Suggested Improvement", "weight": "Bolder", "spacing": "Medium"},
+            {"type": "TextBlock", "text": feedback, "wrap": True}
+        ],
+        "actions": [
+            {"type": "Action.Submit", "title": "Retry", "data": {"action": "retry"}},
+            {"type": "Action.Submit", "title": "View Progress", "data": {"action": "progress"}},
+            {"type": "Action.Submit", "title": "Continue", "data": {"action": "continue"}}
+        ]
+    }        
 
-if __name__ == "__main__":
-    run_terminal_coaching()
+#if __name__ == "__main__":
+#    run_terminal_coaching()
         
-
-"""#Function: core logic, step by step process from start to end of Coach
+#Function: core logic, step by step process from start to end of Coach
 def run_coaching_loop():
      
      profile = load_user_profile()
@@ -366,4 +390,13 @@ if __name__ == "__main__":
     for i in range(rounds):
         print(f"\nRound {i+1} of {rounds}")
         run_coaching_loop()
-        """
+        
+
+ #run server locally
+"""if __name__ == "__main__":
+    mode = input("Run as (1) terminal coach or (2) website\n")
+    if mode =="1":
+        run_coaching_loop()
+    elif mode == "2":
+        pass
+"""
